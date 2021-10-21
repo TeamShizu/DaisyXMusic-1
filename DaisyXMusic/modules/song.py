@@ -1,5 +1,5 @@
-# Daisyxmusic (Telegram bot project )
-# Copyright (C) 2021  Inukaasith
+# Daisy Music (Telegram bot project )
+# Copyright (C) 2021 Deshadeeth Thisarana
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
@@ -28,7 +28,7 @@ import aiofiles
 import aiohttp
 import requests
 import wget
-import yt_dlp
+import youtube_dl
 from pyrogram import Client, filters
 from pyrogram.errors import FloodWait, MessageNotModified
 from pyrogram.types import Message
@@ -54,7 +54,7 @@ def song(client, message):
     ydl_opts = {"format": "bestaudio[ext=m4a]"}
     try:
         results = YoutubeSearch(query, max_results=1).to_dict()
-        link = f"https://youtube.com{results[0]['url_suffix']}"
+        link = f"https://youtube.com{results[0][ url_suffix ]}"
         # print(results)
         title = results[0]["title"][:40]
         thumbnail = results[0]["thumbnails"][0]
@@ -76,7 +76,7 @@ def song(client, message):
             info_dict = ydl.extract_info(link, download=False)
             audio_file = ydl.prepare_filename(info_dict)
             ydl.process_info(info_dict)
-        rep = "**🎵 Uploaded by DaisyXMusic**"
+        rep = "**🎵 Uploaded by @kingdom_of_bot**"
         secmul, dur, dur_arr = 1, 0, duration.split(":")
         for i in range(len(dur_arr) - 1, -1, -1):
             dur += int(dur_arr[i]) * secmul
@@ -300,6 +300,45 @@ async def jssong(_, message):
     is_downloading = False
 
 
+# Deezer Music
+
+
+@Client.on_message(filters.command("deezer") & ~filters.edited)
+async def deezsong(_, message):
+    global is_downloading
+    if len(message.command) < 2:
+        await message.reply_text("/deezer requires an argument.")
+        return
+    if is_downloading:
+        await message.reply_text(
+            "Another download is in progress, try again after sometime."
+        )
+        return
+    is_downloading = True
+    text = message.text.split(None, 1)[1]
+    query = text.replace(" ", "%20")
+    m = await message.reply_text("Searching...")
+    try:
+        songs = await arq.deezer(query, 1)
+        if not songs.ok:
+            await message.reply_text(songs.result)
+            return
+        title = songs.result[0].title
+        url = songs.result[0].url
+        artist = songs.result[0].artist
+        await m.edit("Downloading")
+        song = await download_song(url)
+        await m.edit("Uploading")
+        await message.reply_audio(audio=song, title=title, performer=artist)
+        os.remove(song)
+        await m.delete()
+    except Exception as e:
+        is_downloading = False
+        await m.edit(str(e))
+        return
+    is_downloading = False
+
+
 @Client.on_message(filters.command(["vsong", "video"]))
 async def ytmusic(client, message: Message):
     global is_downloading
@@ -349,7 +388,7 @@ async def ytmusic(client, message: Message):
 
             if duration > DURATION_LIMIT:
                 await pablo.edit(
-                    f"❌ Videos longer than {DURATION_LIMIT} minute(s) aren't allowed, the provided video is {duration} minute(s)"
+                    f"❌ Videos longer than {DURATION_LIMIT} minute(s) aren t allowed, the provided video is {duration} minute(s)"
                 )
                 is_downloading = False
                 return
@@ -361,7 +400,7 @@ async def ytmusic(client, message: Message):
         return
 
     c_time = time.time()
-    file_stark = f"{ytdl_data['id']}.mp4"
+    file_stark = f"{ytdl_data[ id ]}.mp4"
     capy = f"**Video Name ➠** `{thum}` \n**Requested For :** `{urlissed}` \n**Channel :** `{thums}` \n**Link :** `{mo}`"
     await client.send_video(
         message.chat.id,
@@ -375,7 +414,7 @@ async def ytmusic(client, message: Message):
         progress_args=(
             pablo,
             c_time,
-            f"`Uploading {urlissed} Song From YouTube Music!`",
+            f"`Uploading {urlissed} Song From Shadow Music!`",
             file_stark,
         ),
     )
