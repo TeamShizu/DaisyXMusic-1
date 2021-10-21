@@ -1,5 +1,5 @@
-# Daisy Music (Telegram bot project )
-# Copyright (C) 2021 Deshadeeth Thisarana
+# DaisyXMusic (Telegram bot project )
+# Copyright (C) 2021 Inukaasith
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
@@ -28,7 +28,7 @@ import aiofiles
 import aiohttp
 import requests
 import wget
-import youtube_dl
+import yt_dlp
 from pyrogram import Client, filters
 from pyrogram.errors import FloodWait, MessageNotModified
 from pyrogram.types import Message
